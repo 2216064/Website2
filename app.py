@@ -9,7 +9,7 @@ from flask_mail import Mail, Message
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 
-# Initialize Flask app
+# Initialise Flask app
 app = Flask(__name__)
 app.config['STATIC_FOLDER'] = 'static'
 
@@ -29,16 +29,15 @@ app.config["SECRET_KEY"] = os.urandom(24)
 app.config["MAIL_SERVER"] = "smtp.example.com"
 app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USERNAME"] = "your_email@example.com"
-app.config["MAIL_PASSWORD"] = "your_email_password"
-app.config["MAIL_DEFAULT_SENDER"] = "your_email@example.com"
+app.config["MAIL_USERNAME"] = "2216064@leedstrinity.ac.uk"
+app.config["MAIL_PASSWORD"] = "Livingstone£22"
+app.config["MAIL_DEFAULT_SENDER"] = "2216064@leedstrinity.ac.uk"
 
 mail = Mail(app)
 db = SQLAlchemy(app)
 
-# Initialize logger
+# Initialise logger
 logging.basicConfig(level=logging.INFO)
-
 
 class User(db.Model):
     UserID = db.Column(db.Integer, primary_key=True)
@@ -99,19 +98,7 @@ def email_exists(email):
 
 
 def generate_token(length=20):
-    return "".join(
-        random.choices(string.ascii_letters + string.digits, k=length))
-
-
-def generate_captcha():
-    chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
-    captcha_text = ''.join(random.choice(chars) for _ in range(6))
-    session['captcha'] = captcha_text
-    return captcha_text
-
-
-def validate_captcha(input_captcha):
-    return input_captcha == session.get('captcha')
+    return "".join(random.choices(string.ascii_letters + string.digits, k=length))
 
 
 def send_password_reset_email(email, token):
@@ -131,10 +118,13 @@ def update_password(email, new_password):
         db.session.commit()
 
 
-@app.route("/")
+@app.route("/index")
 def index():
-    return redirect(url_for("login"))
-
+    return render_template("index.html")  # Render the index.html template
+    
+@app.route("/platform")
+def platform():
+    return render_template("platform.html")  # Render the platform.html template
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -142,17 +132,9 @@ def login():
         if request.method == "POST":
             email = request.form.get("username", "").strip()
             password = request.form.get("password", "").strip()
-            captcha_input = request.form.get("captcha", "").strip()
             user_type = request.form.get("user_type")
 
-            if not validate_captcha(captcha_input):
-                return jsonify({
-                    "status": "error",
-                    "message": "Invalid CAPTCHA. Please try again."
-                }), 400
-
-            user = User.query.filter_by(Email=email,
-                                        UserType=user_type).first()
+            user = User.query.filter_by(Email=email, UserType=user_type).first()
             if user and check_password_hash(user.Password, password):
                 session["user_id"] = user.UserID
                 session["user_type"] = user.UserType
@@ -163,20 +145,15 @@ def login():
                     })
                 elif user.UserType == "Employer":
                     return jsonify({
-                        "status":
-                        "success",
-                        "redirect_url":
-                        url_for("employer_dashboard")
+                        "status": "success",
+                        "redirect_url": url_for("employer_dashboard")
                     })
             return jsonify({
-                "status":
-                "error",
-                "message":
-                "Invalid username or password. Please try again."
+                "status": "error",
+                "message": "Invalid username or password. Please try again."
             }), 401
 
-        captcha = generate_captcha()
-        return render_template("login.html", captcha=captcha)
+        return render_template("login.html")
     except Exception as e:
         logging.error(f"Error in login: {e}", exc_info=True)
         return jsonify({
@@ -276,8 +253,7 @@ def register_student():
 
         db.session.add(new_user)
         db.session.commit()
-        return render_template(
-            'login.html', message="Registration successful. Please login.")
+        return render_template('login.html', message="Registration successful. Please login.")
 
     return render_template("registerStudent.html")
 
@@ -292,20 +268,16 @@ def register_employer():
         phone_number = request.form.get("employerContactPhone", "").strip()
         employer_website = request.form.get("employerWebsite", "").strip()
         employer_photo = request.files.get("employerPhoto")
-
         if not name or not email or not password or not phone_number or not employer_website:
-            return render_template("registerEmployer.html")
-
+            return render_template("registerEmployer.html", error="All fields are required.")
         if User.query.filter_by(Email=email).first():
-            return render_template("login.html")
-
+            return render_template("login.html", error="An account already exists with this email. Please login instead.")
         # Handle photo upload
         photo_path = None
         if employer_photo and employer_photo.filename:  # Ensure filename is not None
             photo_filename = secure_filename(employer_photo.filename)
             photo_path = os.path.join(app.config['STATIC_FOLDER'], 'uploads', photo_filename)
             employer_photo.save(photo_path)
-
         new_user = User(UserType="Employer",
                         FullName=name,
                         Email=email,
@@ -313,11 +285,9 @@ def register_employer():
                         PhoneNumber=phone_number,
                         EmployerWebsite=employer_website,
                         PhotoURL=photo_path)
-
         db.session.add(new_user)
         db.session.commit()
-        return render_template('login.html')
-
+        return render_template('login.html', message="Registration successful. Please login.")
     return render_template("registerEmployer.html")
 
 
@@ -340,7 +310,7 @@ def api_student_details():
                 "status": "error",
                 "message": "User not found"
             }), 404
-        return jsonify({"status": "error", "message": "Unauthorized"}), 401
+        return jsonify({"status": "error", "message": "Unauthorised"}), 401
     except Exception as e:
         logging.error(f"Error in api_student_details: {e}", exc_info=True)
         return jsonify({
@@ -348,6 +318,25 @@ def api_student_details():
             "message": "Internal server error"
         }), 500
 
+@app.route("/api/employer_details")
+def api_employer_details():
+    try:
+        if "user_id" in session and session["user_type"] == "Employer":
+            user = User.query.get(session["user_id"])
+            if user:
+                user_data = {
+                    "PhotoURL": user.PhotoURL or "static/images/default-profile.png",
+                    "CompanyName": user.FullName,
+                    "ContactEmail": user.Email,
+                    "ContactPhone": user.PhoneNumber,
+                    "CompanyWebsiteURL": user.EmployerWebsite or "#"
+                }
+                return jsonify(user_data)
+            return jsonify({"status": "error", "message": "User not found"}), 404
+        return jsonify({"status": "error", "message": "Unauthorised"}), 401
+    except Exception as e:
+        logging.error(f"Error in api_employer_details: {e}", exc_info=True)
+        return jsonify({"status": "error", "message": "Internal server error"}), 500
 
 @app.route("/forgot_password", methods=["GET", "POST"])
 def forgot_password():
@@ -423,6 +412,186 @@ def reset_password(token):
         return render_template("reset_password.html", token=token)
     except Exception as e:
         logging.error(f"Error in reset_password: {e}", exc_info=True)
+        return jsonify({
+            "status": "error",
+            "message": "Internal server error"
+        }), 500
+
+@app.route("/student_edit", methods=["GET"])
+def student_edit():
+    if "user_id" in session and session["user_type"] == "Student":
+        student = User.query.get(session["user_id"])
+        return render_template("student_edit.html", student=student)
+    return redirect(url_for("login"))
+
+@app.route("/employer_edit", methods=["GET"])
+def employer_edit():
+    if "user_id" in session and session["user_type"] == "Employer":
+        employer = User.query.get(session["user_id"])
+        return render_template("employer_edit.html", employer=employer)
+    return redirect(url_for("login"))
+
+@app.route("/update_student_profile", methods=["POST"])
+def update_student_profile():
+    if "user_id" in session and session["user_type"] == "Student":
+        student = User.query.get(session["user_id"])
+
+        if not student:
+            return jsonify({"status": "error", "message": "Student not found."}), 404
+
+        student.FullName = request.form.get("studentFullName", "").strip()
+        student.Email = request.form.get("studentContactEmail", "").strip()
+        student.PhoneNumber = request.form.get("studentContactPhone", "").strip()
+        student.KeySkills = request.form.get("studentKeySkills", "").strip()
+
+        # Handle photo upload
+        student_photo = request.files.get("studentPhoto")
+        if student_photo and student_photo.filename:
+            photo_filename = secure_filename(student_photo.filename)
+            photo_path = os.path.join(app.config['STATIC_FOLDER'], 'uploads', photo_filename)
+            student_photo.save(photo_path)
+            student.PhotoURL = photo_path
+
+        db.session.commit()
+        return redirect(url_for("student_dashboard"))
+    return redirect(url_for("login"))
+
+@app.route("/update_employer_profile", methods=["POST"])
+def update_employer_profile():
+    if "user_id" in session and session["user_type"] == "Employer":
+        employer = User.query.get(session["user_id"])
+
+        if not employer:
+            return jsonify({"status": "error", "message": "Employer not found."}), 404
+
+        employer.FullName = request.form.get("employerCompanyName", "").strip()
+        employer.Email = request.form.get("employerContactEmail", "").strip()
+        employer.PhoneNumber = request.form.get("employerContactPhone", "").strip()
+        employer.EmployerWebsite = request.form.get("employerWebsite", "").strip()
+
+        # Handle photo upload
+        employer_photo = request.files.get("employerPhoto")
+        if employer_photo and employer_photo.filename:
+            photo_filename = secure_filename(employer_photo.filename)
+            photo_path = os.path.join(app.config['STATIC_FOLDER'], 'uploads', photo_filename)
+            employer_photo.save(photo_path)
+            employer.PhotoURL = photo_path
+
+        db.session.commit()
+        return redirect(url_for("employer_dashboard"))
+    return redirect(url_for("login"))
+
+# Define Job model
+class Job(db.Model):
+    __tablename__ = 'job'  # Ensure correct table name used
+    JobID = db.Column(db.Integer, primary_key=True)
+    EmployerID = db.Column(db.Integer, db.ForeignKey('user.UserID'), nullable=False)
+    Title = db.Column(db.String(255), nullable=False)
+    Description = db.Column(db.Text, nullable=False)
+    Location = db.Column(db.String(255), nullable=False)
+    Salary = db.Column(db.String(50), nullable=True)
+    is_active = db.Column(db.Boolean, default=True)
+
+    def __init__(self, EmployerID, Title, Description, Location, Salary=None):
+        self.EmployerID = EmployerID
+        self.Title = Title
+        self.Description = Description
+        self.Location = Location
+        self.Salary = Salary
+
+
+@app.route("/api/jobs", methods=["GET"])
+def list_jobs():
+    jobs = Job.query.all()
+    return jsonify([{
+        "JobID": job.JobID,
+        "Title": job.Title,
+        "Description": job.Description,
+        "Location": job.Location,
+        "Salary": job.Salary,
+        "is_active": job.is_active
+    } for job in jobs])
+
+
+@app.route("/api/employer_jobs", methods=["GET"])
+def employer_jobs():
+    if "user_id" in session and session["user_type"] == "Employer":
+        jobs = Job.query.filter_by(EmployerID=session["user_id"]).all()
+        return jsonify([{
+            "JobID": job.JobID,
+            "Title": job.Title,
+            "Description": job.Description,
+            "Location": job.Location,
+            "Salary": job.Salary,
+            "is_active": job.is_active
+        } for job in jobs])
+    return jsonify({"status": "error", "message": "Unauthorised"}), 401
+
+
+@app.route("/api/add_job", methods=["POST"])
+def add_job():
+    if "user_id" in session and session["user_type"] == "Employer":
+        title = request.form.get("title", "").strip()
+        description = request.form.get("description", "").strip()
+        location = request.form.get("location", "").strip()
+        salary = request.form.get("salary", "").strip()
+
+        if not title or not description or not location:
+            return jsonify({"status": "error", "message": "All fields are required."}), 400
+
+        new_job = Job(EmployerID=session["user_id"], Title=title, Description=description, Location=location, Salary=salary)
+        db.session.add(new_job)
+        db.session.commit()
+        return jsonify({"status": "success"}), 201
+    return jsonify({"status": "error", "message": "Unauthorised"}), 401
+
+
+@app.route("/api/close_job/<int:job_id>", methods=["POST"])
+def close_job(job_id):
+    if "user_id" in session and session["user_type"] == "Employer":
+        job = Job.query.get(job_id)
+        if job and job.EmployerID == session["user_id"]:
+            job.is_active = False
+            db.session.commit()
+            return jsonify({"status": "success"}), 200
+        return jsonify({"status": "error", "message": "Job not found or unauthorised."}), 404
+    return jsonify({"status": "error", "message": "Unauthorised"}), 401
+
+
+@app.route("/api/search_jobs", methods=["GET"])
+def search_jobs():
+    try:
+        title = request.args.get("title", "").strip()
+        location = request.args.get("location", "").strip()
+
+        query = Job.query
+
+        # Apply filters conditionally and check for attribute errors
+        if title:
+            query = query.filter(Job.Title.ilike(f"%{title}%"))
+        if location:
+            query = query.filter(Job.Location.ilike(f"%{location}%"))
+
+        jobs = query.all()
+
+        job_list = [{
+            "JobID": job.JobID,
+            "Title": job.Title,
+            "Description": job.Description,
+            "Location": job.Location,
+            "Salary": job.Salary,
+            "is_active": job.is_active
+        } for job in jobs]
+
+        return jsonify(job_list)
+    except AttributeError as e:
+        logging.error(f"Attribute error in search_jobs: {e}", exc_info=True)
+        return jsonify({
+            "status": "error",
+            "message": "Internal server error due to attribute error"
+        }), 500
+    except Exception as e:
+        logging.error(f"Error in search_jobs: {e}", exc_info=True)
         return jsonify({
             "status": "error",
             "message": "Internal server error"
