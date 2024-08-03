@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/dashboard.css"">
+    <link rel="stylesheet" href="/static/css/employerdashboard.css"">
     <script src="/static/js/script.js" defer></script>
 </head>
 <body>
@@ -26,7 +26,7 @@
                         <p><strong>CV:</strong> <a id="cvLink" href="#" target="_blank">Loading...</a></p>
                     </div>
                 </div>
-                <a href="templates/edit_student_profile" class="btn">Edit Profile</a>
+                <a href="student_edit" class="btn">Edit Profile</a>
             </div>
         </section>
     </main>
@@ -64,7 +64,7 @@
                 .catch(error => {
                     console.error('Error fetching student details:', error);
                     alert('Error fetching student details: ' + error.message);
-                    window.location.href = '/templates/login.html'; // Redirect to login if not authenticated
+                    window.location.href = '/templates/login'; // Redirect to login if not authenticated
                 });
         });
     </script>
