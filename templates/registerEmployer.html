@@ -16,7 +16,7 @@
     <section>
         <div class="form-container">
             <h2 class="form-title">Employer Registration</h2>
-            <form id="employerRegisterForm" enctype="multipart/form-data">
+            <form id="employerRegisterForm" method="POST" action="{{ url_for('register_employer') }}" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="employerCompanyName">Company Name:</label>
                     <input type="text" id="employerCompanyName" name="employerCompanyName" required>
