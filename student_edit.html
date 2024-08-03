@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Edit Profile</h1>
+    </header>
+    <main>
+        <form method="POST" action="{{ url_for('edit_student') }}">
+            <label for="full_name">Full Name:</label>
+            <input type="text" id="full_name" name="full_name" value="{{ user.FullName }}" required>
+
+            <label for="phone_number">Phone Number:</label>
+            <input type="text" id="phone_number" name="phone_number" value="{{ user.PhoneNumber }}" required>
+
+            <label for="photo_url">Photo URL:</label>
+            <input type="text" id="photo_url" name="photo_url" value="{{ user.PhotoURL }}">
+
+            <label for="cv_url">CV URL:</label>
+            <input type="text" id="cv_url" name="cv_url" value="{{ user.CVURL }}">
+
+            <label for="key_skills">Key Skills:</label>
+            <input type="text" id="key_skills" name="key_skills" value="{{ user.KeySkills }}">
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </main>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>

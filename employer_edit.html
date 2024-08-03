@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Employer Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Edit Profile</h1>
+    </header>
+    <main>
+        <form method="POST" action="{{ url_for('edit_employer') }}">
+            <label for="full_name">Company Name:</label>
+            <input type="text" id="full_name" name="full_name" value="{{ user.FullName }}" required>
+
+            <label for="phone_number">Phone Number:</label>
+            <input type="text" id="phone_number" name="phone_number" value="{{ user.PhoneNumber }}" required>
+
+            <label for="employer_website">Website:</label>
+            <input type="text" id="employer_website" name="employer_website" value="{{ user.EmployerWebsite }}">
+
+            <label for="photo_url">Photo URL:</label>
+            <input type="text" id="photo_url" name="photo_url" value="{{ user.PhotoURL }}">
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </main>
+    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+</body>
+</html>

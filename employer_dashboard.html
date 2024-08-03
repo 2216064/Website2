@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="topnav"></div>
+    </header>
+    <main>
+        <section>
+            <div class="dashboard-container">
+                <h1>Employer Dashboard</h1>
+                <div class="employer-details">
+                    <div class="profile-picture">
+                        <img id="companyPhotograph" src="static/images/default-profile.png" alt="Company Photograph">
+                    </div>
+                    <div class="details">
+                        <p><strong>Company Name:</strong> <span id="companyName">Loading...</span></p>
+                        <p><strong>Contact Email:</strong> <span id="contactEmail">Loading...</span></p>
+                        <p><strong>Contact Phone:</strong> <span id="contactPhone">Loading...</span></p>
+                        <p><strong>Company Website:</strong> <a id="companyWebsite" href="#" target="_blank">Loading...</a></p>
+                    </div>
+                </div>
+                <a href="templates/edit_employer_profile" class="btn">Edit Profile</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Job Platform. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/api/employer_details')
+                .then(response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('Unexpected response from the server');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'error') {
+                        console.error('Error fetching employer details:', data.message);
+                        alert('Error fetching employer details: ' + data.message);
+                        return;
+                    }
+
+                    document.getElementById('companyPhotograph').src = data.PhotoURL;
+                    document.getElementById('companyName').textContent = data.CompanyName;
+                    document.getElementById('contactEmail').textContent = data.ContactEmail;
+                    document.getElementById('contactPhone').textContent = data.ContactPhone;
+                    const companyWebsiteLink = document.getElementById('companyWebsite');
+                    companyWebsiteLink.href = data.CompanyWebsiteURL;
+                    companyWebsiteLink.textContent = data.CompanyWebsiteURL !== '#' ? data.CompanyWebsiteURL : 'Website not available';
+                })
+                .catch(error => {
+                    console.error('Error fetching employer details:', error);
+                    alert('Error fetching employer details: ' + error.message);
+                    window.location.href = '/templates/login.html'; // Redirect to login if not authenticated
+                });
+        });
+    </script>
+</body>
+</html>

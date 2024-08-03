@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/loginstyle.css">
+    <title>Register Employer</title>
+</head>
+
+<body>
+    <br><br><br>
+    <header>
+        <script src="/static/js/script.js"></script>
+    </header>
+    <section>
+        <div class="form-container">
+            <h2 class="form-title">Employer Registration</h2>
+            <form id="employerRegisterForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="employerCompanyName">Company Name:</label>
+                    <input type="text" id="employerCompanyName" name="employerCompanyName" required>
+                </div>
+                <div class="form-group">
+                    <label for="employerContactEmail">Contact Email:</label>
+                    <input type="email" id="employerContactEmail" name="employerContactEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="employerPassword">Password:</label>
+                    <input type="password" id="employerPassword" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="employerContactPhone">Contact Phone:</label>
+                    <input type="tel" id="employerContactPhone" name="employerContactPhone" required>
+                </div>
+                <div class="form-group">
+                    <label for="employerWebsite">Company Website:</label>
+                    <input type="url" id="employerWebsite" name="employerWebsite" required>
+                </div>
+                <div class="form-group">
+                    <label for="employerPhoto">Upload Logo:</label>
+                    <input type="file" id="employerPhoto" name="employerPhoto" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Register</button>
+                </div>
+            </form>
+        </div>
+    </section>
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Job Matching Platform. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>

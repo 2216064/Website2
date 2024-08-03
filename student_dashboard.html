@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/css/dashboard.css"">
+    <script src="/static/js/script.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="topnav">
+    </header>
+    <main>
+        <section>
+            <div class="dashboard-container">
+                <h1>Student Dashboard</h1>
+                <div class="student-details">
+                    <div class="profile-picture">
+                        <img id="profilePicture" src="static/images/default-profile.png" alt="Profile Picture">
+                    </div>
+                    <div class="details">
+                        <p><strong>Full Name:</strong> <span id="fullName">Loading...</span></p>
+                        <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+                        <p><strong>Phone Number:</strong> <span id="phoneNumber">Loading...</span></p>
+                        <p><strong>Key Skills:</strong> <span id="keySkills">Loading...</span></p>
+                        <p><strong>CV:</strong> <a id="cvLink" href="#" target="_blank">Loading...</a></p>
+                    </div>
+                </div>
+                <a href="templates/edit_student_profile" class="btn">Edit Profile</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Job Platform. All rights reserved.</p>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/api/student_details')
+                .then(response => {
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error('Unexpected response from the server');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === 'error') {
+                        console.error('Error fetching student details:', data.message);
+                        alert('Error fetching student details: ' + data.message);
+                        return;
+                    }
+
+                    document.getElementById('profilePicture').src = data.PhotoURL;
+                    document.getElementById('fullName').textContent = data.FullName;
+                    document.getElementById('email').textContent = data.Email;
+                    document.getElementById('phoneNumber').textContent = data.PhoneNumber;
+                    document.getElementById('keySkills').textContent = data.KeySkills;
+                    document.getElementById('cvLink').href = data.CVURL;
+                    document.getElementById('cvLink').textContent = data.CVURL !== '#' ? 'View CV' : 'CV not available';
+                })
+                .catch(error => {
+                    console.error('Error fetching student details:', error);
+                    alert('Error fetching student details: ' + error.message);
+                    window.location.href = '/templates/login.html'; // Redirect to login if not authenticated
+                });
+        });
+    </script>
+</body>
+</html>
