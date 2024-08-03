@@ -1,0 +1,50 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.section {
+    text-align: center;
+    padding: 80px 0;
+}
+
+.bkgimg {
+    position: relative;
+    overflow: hidden; /* Keep overflow: hidden here for potential future use */
+}
+
+.bkgimg img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+#about {
+    background-image: url("/static/images/new-york-city-5oaa14h4mw6w3o71\ \(1\).jpg");
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(38, 70, 83, 0.7);
+    margin-bottom: 20px;
+}
+
+#testimonials {
+    background-image: url("/static/images/1000_F_536022929_rHVla2eMU4AiI95H75ykj6P47LCfEwQo\ \(1\).jpg");
+    background-size: cover;
+    background-position: center;
+    height: 100vh; /* Adjust the height as needed */
+    color: #00000;
+    margin-top: 20px;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+}
