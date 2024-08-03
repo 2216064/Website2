@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Initialize AOS
+    // Initialise AOS
     AOS.init();
 
     // Fetch and display job listings
