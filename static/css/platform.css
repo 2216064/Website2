@@ -1,25 +1,24 @@
 a {
-    color: inherit; /* Inherit color from parent element */
-    text-decoration: none; /* Remove underline */
+    color: inherit;
+    text-decoration: none; 
 }
 
-/* Optional: Add styles for hover and visited states */
 a:hover,
 a:focus {
-    color: inherit; /* Maintain the color for hover and focus states */
-    text-decoration: none; /* Maintain no underline on hover and focus */
+    color: inherit; 
+    text-decoration: none;
 }
 
 a:visited {
-    color: inherit; /* Maintain the color for visited links */
-}
-/* Ensure top-nav has a height set */
-.top-nav {
-    height: 60px; /* Adjust this height if top-nav is taller or shorter */
-    line-height: 60px; /* Align text or content vertically in the middle if needed */
+    color: inherit;
 }
 
-/* Container to ensure the sticky bar behaves correctly */
+.top-nav {
+    height: 60px; 
+    line-height: 60px; 
+}
+
+
 .sticky-container {
     position: relative;
     z-index: 999; /* Ensure it"s below the sticky-search-bar */
@@ -28,14 +27,14 @@ a:visited {
 /* Sticky search bar styling */
 .sticky-search-bar {
     position: sticky;
-    top: 60px; /* Adjust according to the height of top-nav */
+    top: 60px; 
     background-color: #3498db;
-    padding: 12px 20px; /* Adjust padding for better spacing */
+    padding: 12px 20px; 
     text-align: center;
     z-index: 900; /* Ensure it"s above other content */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for subtle elevation */
-    border-bottom: 1px solid #ddd; /* Light border for separation */
-    border-radius: 0 0 8px 8px; /* Rounded bottom corners for a smoother look */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    border-bottom: 1px solid #ddd; 
+    border-radius: 0 0 8px 8px; 
 }
 .post-job-button {
     display: inline-block;
@@ -61,25 +60,25 @@ a:visited {
 
 @media (max-width: 480px) {
     .sticky-search-bar {
-        padding: 8px 10px; /* Further adjustment for very small screens */
-        top: 50px; /* Further adjust if needed */
+        padding: 8px 10px; 
+        top: 50px; 
     }
 
     .sticky-search-bar form {
-        flex-direction: column; /* Stack form elements vertically */
+        flex-direction: column; 
     }
 
     .sticky-search-bar input,
     .sticky-search-bar button {
-        margin: 5px 0; /* Vertical margin for stacked elements */
+        margin: 5px 0; 
     }
-    /* Button styling */
+    
     .post-job-button {
         display: inline-block;
         padding: 10px 20px;
         margin: 5px;
         border-radius: 5px;
-        background-color: #e74c3c; /* Red color */
+        background-color: #e74c3c; 
         color: #ffffff;
         text-decoration: none;
         font-weight: bold;
