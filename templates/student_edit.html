@@ -1,35 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Student Profile</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* Reset some default styles */
+        body, h2, form, input, label, button {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        main {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: #555;
+            display: inline-block;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            color: #333;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="file"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            padding: 12px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
+
 <body>
     <header>
-        <h1>Edit Profile</h1>
+        <h2>Edit Student Profile</h2>
     </header>
     <main>
-        <form method="POST" action="{{ url_for('edit_student') }}">
-            <label for="full_name">Full Name:</label>
-            <input type="text" id="full_name" name="full_name" value="{{ user.FullName }}" required>
-
-            <label for="phone_number">Phone Number:</label>
-            <input type="text" id="phone_number" name="phone_number" value="{{ user.PhoneNumber }}" required>
-
-            <label for="photo_url">Photo URL:</label>
-            <input type="text" id="photo_url" name="photo_url" value="{{ user.PhotoURL }}">
-
-            <label for="cv_url">CV URL:</label>
-            <input type="text" id="cv_url" name="cv_url" value="{{ user.CVURL }}">
-
-            <label for="key_skills">Key Skills:</label>
-            <input type="text" id="key_skills" name="key_skills" value="{{ user.KeySkills }}">
-
-            <button type="submit">Save Changes</button>
+        <form method="POST" action="{{ url_for('update_student_profile') }}" enctype="multipart/form-data">
+            <div>
+                <label for="studentFullName">Full Name:</label>
+                <input type="text" id="studentFullName" name="studentFullName" value="{{ student.FullName }}" required>
+            </div>
+            <div>
+                <label for="studentContactEmail">Email:</label>
+                <input type="email" id="studentContactEmail" name="studentContactEmail" value="{{ student.Email }}" required>
+            </div>
+            <div>
+                <label for="studentContactPhone">Phone Number:</label>
+                <input type="tel" id="studentContactPhone" name="studentContactPhone" value="{{ student.PhoneNumber }}" required>
+            </div>
+            <div>
+                <label for="studentKeySkills">Key Skills:</label>
+                <input type="text" id="studentKeySkills" name="studentKeySkills" value="{{ student.KeySkills }}">
+            </div>
+            <div>
+                <label for="studentPhoto">Upload Photo:</label>
+                <input type="file" id="studentPhoto" name="studentPhoto" accept="image/*">
+            </div>
+            <button type="submit">Update Profile</button>
         </form>
     </main>
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
+
 </html>
