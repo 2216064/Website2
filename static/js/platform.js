@@ -6,11 +6,18 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchJobs();
 
     function fetchJobs(query = "") {
-        fetch("/api/jobs" + query)  // Adjust this to your API endpoint
-            .then(response => response.json())
+        fetch("/api/search_jobs" + query) 
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log("Fetched job listings:", data);  // Log fetched data
                 const jobNoticeboard = document.getElementById("jobNoticeboard");
                 jobNoticeboard.innerHTML = "";  // Clear existing job cards
+
                 data.forEach(job => {
                     const jobCard = createJobCard(job);
                     jobNoticeboard.appendChild(jobCard);
@@ -29,34 +36,34 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const jobTitle = document.createElement("h5");
         jobTitle.className = "card-title";
-        jobTitle.textContent = job.title;
+        jobTitle.textContent = job.Title;
 
         const employer = document.createElement("h6");
         employer.className = "card-subtitle mb-2 text-muted";
-        employer.textContent = job.employer;
+        employer.textContent = job.EmployerID; // Assuming EmployerID is used to fetch or display employer's info
 
         const details = document.createElement("div");
         details.className = "card-text";
 
         const location = document.createElement("p");
         location.className = "location";
-        location.innerHTML = `<i class="fas fa-map-marker-alt"></i> Location: ${job.location}`;
+        location.innerHTML = `<i class="fas fa-map-marker-alt"></i> Location: ${job.Location}`;
 
         const salary = document.createElement("p");
         salary.className = "salary";
-        salary.innerHTML = `<i class="fas fa-dollar-sign"></i> Salary: ${job.salary}`;
+        salary.innerHTML = `<i class="fas fa-dollar-sign"></i> Salary: ${job.Salary}`;
 
         details.appendChild(location);
         details.appendChild(salary);
 
         jobCardBody.appendChild(jobTitle);
-        jobCardBody.appendChild(employer);
+        jobCardBody.appendChild(employer); // Re-including as it was originally fetching "employer".
         jobCardBody.appendChild(details);
 
-        if (job.description) {
+        if (job.Description) {
             const description = document.createElement("p");
             description.className = "job-description";
-            description.textContent = job.description;
+            description.textContent = job.Description;
             jobCardBody.appendChild(description);
         }
 
@@ -79,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
     style.textContent = `
         .sticky-container {
             position: relative;
-            z-index: 800; /* Ensure it"s below the top-nav */
+            z-index: 800; /* Ensure it's below the top-nav */
         }
 
         .sticky-search-bar {
@@ -88,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function() {
             background-color: #3498db;
             padding: 10px 20px;
             text-align: center;
-            z-index: 1000; /* Ensure it"s above other content */
+            z-index: 1000; /* Ensure it's above other content */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-bottom: 1px solid #ddd;
         }
