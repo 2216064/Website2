@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="dashboard.css">
-    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="/static/css/employerdashboard.css">
+    <script src="/static/js/script.js" defer></script>
 </head>
+
 <body>
     <header>
         <div class="topnav"></div>
@@ -22,14 +24,36 @@
                         <p><strong>Company Name:</strong> <span id="companyName">Loading...</span></p>
                         <p><strong>Contact Email:</strong> <span id="contactEmail">Loading...</span></p>
                         <p><strong>Contact Phone:</strong> <span id="contactPhone">Loading...</span></p>
-                        <p><strong>Company Website:</strong> <a id="companyWebsite" href="#" target="_blank">Loading...</a></p>
+                        <p><strong>Company Website:</strong> <a id="companyWebsite" href="#"
+                                target="_blank">Loading...</a></p>
                     </div>
                 </div>
-                <a href="templates/edit_employer_profile" class="btn">Edit Profile</a>
+                <a href="employer_edit" class="btn">Edit Profile</a>
+            </div>
+            <hr>
+            <h2>Manage Job Adverts</h2>
+            <div class="jobForm-container">
+                <h3>Post a New Job</h3>
+                <form id="jobForm">
+                    <label for="title">Job Title:</label>
+                    <input type="text" id="title" name="title" required>
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" required></textarea>
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" name="location" required>
+                    <label for="salary">Salary:</label>
+                    <input type="text" id="salary" name="salary">
+                    <button type="submit">Post Job</button>
+                </form>
+            </div>
+            <div class="jobListings-container">
+                <h3>Current Job Listings</h3>
+                <div id="jobListings">
+                    <!-- Job listings will be populated here -->
+                </div>
             </div>
         </section>
     </main>
-
     <footer>
         <div class="container">
             <p>&copy; 2024 Job Platform. All rights reserved.</p>
@@ -63,9 +87,71 @@
                 .catch(error => {
                     console.error('Error fetching employer details:', error);
                     alert('Error fetching employer details: ' + error.message);
-                    window.location.href = '/templates/login.html'; // Redirect to login if not authenticated
+                  //  window.location.href = '/login'; // Redirect to login if not authenticated
                 });
+
+            // Fetch employer job listings
+            function fetchEmployerJobs() {
+                fetch('/api/employer_jobs')
+                    .then(response => response.json())
+                    .then(data => {
+                        const jobListings = document.getElementById('jobListings');
+                        jobListings.innerHTML = '';
+                        data.forEach(job => {
+                            const jobItem = document.createElement('div');
+                            jobItem.className = 'job-item';
+                            jobItem.innerHTML = `
+                                <h4>${job.Title}</h4>
+                                <p>${job.Description}</p>
+                                <p>Location: ${job.Location}</p>
+                                <p>Salary: ${job.Salary || 'N/A'}</p>
+                                <p>Status: ${job.is_active ? 'Active' : 'Closed'}</p>
+                                ${job.is_active ? `<button onclick="closeJob(${job.JobID})">Close Job</button>` : ''}
+                            `;
+                            jobListings.appendChild(jobItem);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching job listings:', error));
+            }
+
+            fetchEmployerJobs();
+
+            // Handle job form submission
+            document.getElementById('jobForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                fetch('/api/add_job', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            fetchEmployerJobs();
+                            this.reset();
+                        } else {
+                            alert('Error adding job: ' + (data.message || 'Unknown error'));
+                        }
+                    })
+                    .catch(error => console.error('Error adding job:', error));
+            });
         });
+
+        function closeJob(jobID) {
+            fetch(`/api/close_job/${jobID}`, {
+                method: 'POST'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        fetchEmployerJobs();
+                    } else {
+                        alert('Error closing job: ' + (data.message || 'Unknown error'));
+                    }
+                })
+                .catch(error => console.error('Error closing job:', error));
+        }
     </script>
 </body>
+
 </html>
